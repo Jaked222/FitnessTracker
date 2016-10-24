@@ -5,14 +5,20 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/product_price"
+        android:id="@+id/user_distance"
         android:layout_width="159dp"
         android:layout_height="41dp"
         android:layout_alignBottom="@+id/product_name"
         android:layout_alignParentEnd="true"/>
 
     <TextView
-        android:id="@+id/product_name"
+        android:id="@+id/user_pass"
+        android:layout_width="161dp"
+        android:layout_height="39dp"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/user_name"
         android:layout_width="161dp"
         android:layout_height="39dp"
         android:layout_alignParentTop="true"

@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         String[] from = new String[] {UserTable.NAME, UserTable.DISTANCE};
-        int[] to = new int[] {R.id.product_name, R.id.product_price};
+        int[] to = new int[] {R.id.user_name, R.id.user_distance};
 
         productList.setAdapter(new SimpleCursorAdapter(this, R.layout.product_row, databaseHelper.getProductCursor(), from, to));
     }
