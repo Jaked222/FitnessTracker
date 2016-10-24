@@ -43,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         for (User user : users) {
             ContentValues values = new ContentValues();
             values.put(UserTable.NAME, user.getName());
-            values.put(UserTable.PRICE, user.getDistanceWalked());
+            values.put(UserTable.DISTANCE, user.getDistanceWalked());
 
             sqLiteDatabase.insert(UserTable.TABLE_NAME, null, values);
         }

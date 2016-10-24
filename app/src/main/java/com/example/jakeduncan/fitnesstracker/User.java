@@ -8,9 +8,9 @@ public class User {
     private String name;
     private Integer distanceWalked;
 
-    public User(String name, Integer price) {
+    public User(String name, Integer walked) {
         this.name = name;
-        this.distanceWalked = price;
+        this.distanceWalked = walked;
     }
 
     public String getName() {
