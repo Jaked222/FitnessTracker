@@ -9,6 +9,12 @@ public class User {
     private Integer distanceWalked;
     private String password;
 
+    public User(String name, Integer distanceWalked, String password) {
+        this.name = name;
+        this.distanceWalked = distanceWalked;
+        this.password = password;
+    }
+
     public String getPassword() {
         return password;
     }

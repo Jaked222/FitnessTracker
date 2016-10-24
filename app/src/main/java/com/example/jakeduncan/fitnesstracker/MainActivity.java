@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             values.put(UserTable.PASSWORD, pass);
 
             databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, values);
-
+            databaseHelper.close();
             //open activity with user info
         }
 
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         ListView productList = (ListView) findViewById(R.id.products_list);
         productList.setAdapter(new SimpleCursorAdapter(this, R.layout.product_row, databaseHelper.getProductCursor(), from, to));
     }
+    //this should be SQLInjection-proof.
     public boolean verification(String _username) throws SQLException {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase dataBase = databaseHelper.getReadableDatabase();
