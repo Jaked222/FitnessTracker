@@ -6,18 +6,18 @@ package com.example.jakeduncan.fitnesstracker;
 
 public class User {
     private String name;
-    private Integer price;
+    private Integer distanceWalked;
 
     public User(String name, Integer price) {
         this.name = name;
-        this.price = price;
+        this.distanceWalked = price;
     }
 
     public String getName() {
         return name;
     }
 
-    public Integer getPrice() {
-        return price;
+    public Integer getDistanceWalked() {
+        return distanceWalked;
     }
 }
