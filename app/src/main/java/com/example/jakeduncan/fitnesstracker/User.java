@@ -4,20 +4,20 @@ package com.example.jakeduncan.fitnesstracker;
  * Created by jakeduncan on 10/24/16.
  */
 
-public class Product {
+public class User {
     private String name;
-    private Integer distanceWalked;
+    private Integer price;
 
-    public Product(String name, Integer walked) {
+    public User(String name, Integer price) {
         this.name = name;
-        this.distanceWalked = walked;
+        this.price = price;
     }
 
     public String getName() {
         return name;
     }
 
-    public Integer getDistanceWalked() {
-        return distanceWalked;
+    public Integer getPrice() {
+        return price;
     }
 }
