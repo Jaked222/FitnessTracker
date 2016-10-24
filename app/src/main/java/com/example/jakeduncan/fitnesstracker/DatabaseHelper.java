@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(UserTable.CREATE_QUERY);
-        seedProducts(sqLiteDatabase);
+    //    seedProducts(sqLiteDatabase);
     }
 
     @Override
@@ -32,6 +32,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         sqLiteDatabase.execSQL(UserTable.CREATE_QUERY);
     }
 
+
+
+    public Cursor getProductCursor() {
+        return this.getWritableDatabase().rawQuery(UserTable.SElECT_QUERY, null);
+    }
     private void seedProducts(SQLiteDatabase sqLiteDatabase){
         List<User> users = asList(
                 new User("jake", 5000),
@@ -47,9 +52,5 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
             sqLiteDatabase.insert(UserTable.TABLE_NAME, null, values);
         }
-    }
-
-    public Cursor getProductCursor() {
-        return this.getWritableDatabase().rawQuery(UserTable.SElECT_QUERY, null);
     }
 }

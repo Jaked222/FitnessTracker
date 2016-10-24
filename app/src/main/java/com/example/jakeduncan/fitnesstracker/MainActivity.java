@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         databaseHelper.getWritableDatabase().insert(UserTable.TABLE_NAME, null, values);
 
+
         String[] from = new String[] {UserTable.NAME, UserTable.DISTANCE};
         int[] to = new int[] {R.id.product_name, R.id.product_price};
 
