@@ -16,7 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".DataBase" />
-        <activity android:name=".UserActivity"></activity>
+        <activity android:name=".UserActivity" />
+        <activity android:name=".DatabaseShow"></activity>
     </application>
 
 </manifest>

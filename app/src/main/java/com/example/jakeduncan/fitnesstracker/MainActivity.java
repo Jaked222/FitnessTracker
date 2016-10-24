@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
         dev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 setContentView(R.layout.database_list);
                 showDatabase();
             }
