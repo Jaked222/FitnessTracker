@@ -7,6 +7,15 @@ package com.example.jakeduncan.fitnesstracker;
 public class User {
     private String name;
     private Integer distanceWalked;
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public User(String name, Integer walked) {
         this.name = name;

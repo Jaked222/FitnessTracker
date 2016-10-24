@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
 
              //  sign(userName, passWord);
-              SignInOrRegister(userName, 50);
+              SignInOrRegister(userName, passWord);
             }
         });
     }
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         myIntent.putExtra("key", value); //Optional parameters
         startActivity(myIntent);
     }
-    public void SignInOrRegister(String user, int pass){
+    public void SignInOrRegister(String user, String pass){
         //check db for username. if doesnt exist, create it with given pass. Open fitness page from 0
         //if exists, open user info with tracked fitness info.
         setContentView(R.layout.database_list);
@@ -61,13 +61,14 @@ public class MainActivity extends AppCompatActivity {
 
         ContentValues values = new ContentValues();
         values.put(UserTable.NAME, user);
-        values.put(UserTable.DISTANCE, pass);
+        values.put(UserTable.DISTANCE, 50);
+        values.put(UserTable.PASSWORD, pass);
 
         databaseHelper.getWritableDatabase().insert(UserTable.TABLE_NAME, null, values);
 
 
-        String[] from = new String[] {UserTable.NAME, UserTable.DISTANCE};
-        int[] to = new int[] {R.id.user_name, R.id.user_distance};
+        String[] from = new String[] {UserTable.NAME, UserTable.DISTANCE, UserTable.PASSWORD};
+        int[] to = new int[] {R.id.user_name, R.id.user_distance, R.id.user_pass};
 
         productList.setAdapter(new SimpleCursorAdapter(this, R.layout.product_row, databaseHelper.getProductCursor(), from, to));
     }
