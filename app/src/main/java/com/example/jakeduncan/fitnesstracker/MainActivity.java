@@ -10,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import static com.example.jakeduncan.fitnesstracker.R.id.pass;
@@ -54,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DatabaseShow.class);
                 startActivity(intent);
-               // showDatabase();
             }
         });
     }
@@ -85,15 +82,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-    }
-    public void showDatabase(){
-        DatabaseHelper databaseHelper = new DatabaseHelper(this);
-        String[] from = new String[] {UserTable.NAME, UserTable.DISTANCE, UserTable.PASSWORD};
-        int[] to = new int[] {R.id.user_name, R.id.user_distance, R.id.user_pass};
-
-        ListView productList = (ListView) findViewById(R.id.products_list);
-        productList.setAdapter(new SimpleCursorAdapter(this, R.layout.product_row, databaseHelper.getProductCursor(), from, to));
-        databaseHelper.close();
     }
     //this should be SQLInjection-proof.
     public boolean verification(String _username) throws SQLException {

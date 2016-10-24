@@ -12,6 +12,7 @@ public class DatabaseShow extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.database_list);
 
+        //displays all the database fields in a listview for testing purposes.
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         String[] from = new String[] {UserTable.NAME, UserTable.DISTANCE, UserTable.PASSWORD};
         int[] to = new int[] {R.id.user_name, R.id.user_distance, R.id.user_pass};
