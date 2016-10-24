@@ -1,6 +1,7 @@
 package com.example.jakeduncan.fitnesstracker;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,7 +19,7 @@ import static com.example.jakeduncan.fitnesstracker.UserTable.TABLE_NAME;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    Button dev;
     Button signIn;
     EditText userField;
     EditText passField;
@@ -33,8 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
         userField = (EditText) findViewById(R.id.userName);
         passField = (EditText) findViewById(pass);
+
+        dev = (Button) findViewById(R.id.dev);
         signIn = (Button) findViewById(R.id.signIn);
         signIn.setOnClickListener(new View.OnClickListener() {
+
 
             @Override
             public void onClick(View v) {
@@ -45,14 +49,24 @@ public class MainActivity extends AppCompatActivity {
               SignInOrRegister(userName, passWord);
             }
         });
+        dev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                setContentView(R.layout.database_list);
+                showDatabase();
+            }
+        });
     }
     public void SignInOrRegister(String user, String pass){
-        setContentView(R.layout.database_list);
+
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
 
         if (verification(user)){
-            //open activity with user info
             Toast.makeText(this, "User already exists.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, UserActivity.class);
+            intent.putExtra("namekey", user);
+            startActivity(intent);
         }
         else{
             ContentValues values = new ContentValues();
@@ -62,9 +76,18 @@ public class MainActivity extends AppCompatActivity {
 
             databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, values);
             databaseHelper.close();
-            //open activity with user info
+            Toast.makeText(this, "Stored new user.", Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(this, UserActivity.class);
+            intent.putExtra("namekey", user);
+            startActivity(intent);
+
         }
 
+
+    }
+    public void showDatabase(){
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
         String[] from = new String[] {UserTable.NAME, UserTable.DISTANCE, UserTable.PASSWORD};
         int[] to = new int[] {R.id.user_name, R.id.user_distance, R.id.user_pass};
 
@@ -92,4 +115,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }
