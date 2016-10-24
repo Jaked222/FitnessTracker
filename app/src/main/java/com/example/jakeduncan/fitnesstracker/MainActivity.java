@@ -52,8 +52,9 @@ public class MainActivity extends AppCompatActivity {
         dev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setContentView(R.layout.database_list);
-                showDatabase();
+                Intent intent = new Intent(MainActivity.this, DatabaseShow.class);
+                startActivity(intent);
+           //     showDatabase();
             }
         });
     }
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         ListView productList = (ListView) findViewById(R.id.products_list);
         productList.setAdapter(new SimpleCursorAdapter(this, R.layout.product_row, databaseHelper.getProductCursor(), from, to));
+        databaseHelper.close();
     }
     //this should be SQLInjection-proof.
     public boolean verification(String _username) throws SQLException {
