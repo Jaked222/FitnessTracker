@@ -6,12 +6,12 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import static com.example.jakeduncan.fitnesstracker.R.id.pass;
 import static com.example.jakeduncan.fitnesstracker.UserTable.TABLE_NAME;
@@ -47,32 +47,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     public void SignInOrRegister(String user, String pass){
-        //check db for username. if doesnt exist, create it with given pass. Open fitness page from 0
-        //if exists, open user info with tracked fitness info.
         setContentView(R.layout.database_list);
-        ListView productList = (ListView) findViewById(R.id.products_list);
-
-
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
 
-        ContentValues values = new ContentValues();
-        values.put(UserTable.NAME, user);
-        values.put(UserTable.DISTANCE, 50);
-        values.put(UserTable.PASSWORD, pass);
+        if (verification(user)){
+            //open activity with user info
+            Toast.makeText(this, "User already exists.", Toast.LENGTH_LONG).show();
+        }
+        else{
+            ContentValues values = new ContentValues();
+            values.put(UserTable.NAME, user);
+            values.put(UserTable.DISTANCE, 50);
+            values.put(UserTable.PASSWORD, pass);
 
-        databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, values);
+            databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, values);
 
-       if( verification("jakedddd")){
-
-           Log.d("yes", "true");
-       }else{
-           Log.d("no", "false ");
-       }
-
+            //open activity with user info
+        }
 
         String[] from = new String[] {UserTable.NAME, UserTable.DISTANCE, UserTable.PASSWORD};
         int[] to = new int[] {R.id.user_name, R.id.user_distance, R.id.user_pass};
 
+        ListView productList = (ListView) findViewById(R.id.products_list);
         productList.setAdapter(new SimpleCursorAdapter(this, R.layout.product_row, databaseHelper.getProductCursor(), from, to));
     }
     public boolean verification(String _username) throws SQLException {
