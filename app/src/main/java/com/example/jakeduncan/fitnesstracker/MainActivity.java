@@ -63,19 +63,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (verification(user)) {
 
-            if (checkPassword(user, pass)){
-                Toast.makeText(this, "pass correct", Toast.LENGTH_LONG).show();
-            }else{
-                Toast.makeText(this, "pass wrong", Toast.LENGTH_LONG).show();
-            }
-            //if incorrect, display incorrect.
+          if (checkPassword(user, pass)){
+              Toast.makeText(this, "User exists, password correct.. Logging in.", Toast.LENGTH_LONG).show();
+              Intent intent = new Intent(this, UserActivity.class);
+              intent.putExtra("namekey", user);
+              startActivity(intent);
+          }
+          else{
+              Toast.makeText(this, "Password incorrect for given user.", Toast.LENGTH_LONG).show();
+          }
 
-
-            //if correct, log in.
-         //   Toast.makeText(this, "User exists, password correct.. Logging in.", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this, UserActivity.class);
-            intent.putExtra("namekey", user);
-            startActivity(intent);
 
         } else {
             ContentValues values = new ContentValues();
