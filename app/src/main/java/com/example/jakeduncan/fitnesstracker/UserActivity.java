@@ -37,7 +37,7 @@ public class UserActivity extends AppCompatActivity {
             if(cursor.getCount() > 0) {
 
                 cursor.moveToFirst();
-                distance = cursor.getInt(cursor.getColumnIndex("distance"));
+                distance = cursor.getInt(cursor.getColumnIndex(UserTable.DISTANCE));
             }
 
             return distance;

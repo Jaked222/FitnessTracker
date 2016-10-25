@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-              userName =  userField.getText().toString();
-              passWord = passField.getText().toString();
+                userName = userField.getText().toString();
+                passWord = passField.getText().toString();
 
 
-              SignInOrRegister(userName, passWord);
+                SignInOrRegister(userName, passWord);
             }
         });
         dev.setOnClickListener(new View.OnClickListener() {
@@ -55,17 +56,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    public void SignInOrRegister(String user, String pass){
+
+    public void SignInOrRegister(String user, String pass) {
 
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
 
-        if (verification(user)){
-            Toast.makeText(this, "User exists. Logging in.", Toast.LENGTH_LONG).show();
+        if (verification(user)) {
+
+            if (checkPassword(user, pass)){
+                Toast.makeText(this, "pass correct", Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(this, "pass wrong", Toast.LENGTH_LONG).show();
+            }
+            //if incorrect, display incorrect.
+
+
+            //if correct, log in.
+         //   Toast.makeText(this, "User exists, password correct.. Logging in.", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, UserActivity.class);
             intent.putExtra("namekey", user);
             startActivity(intent);
-        }
-        else{
+
+        } else {
             ContentValues values = new ContentValues();
             values.put(UserTable.NAME, user);
             values.put(UserTable.DISTANCE, 50);
@@ -83,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     //this should be SQLInjection-proof.
     public boolean verification(String _username) throws SQLException {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
@@ -92,17 +105,41 @@ public class MainActivity extends AppCompatActivity {
         try {
             String query = "SELECT COUNT(*) FROM "
                     + TABLE_NAME + " WHERE " + UserTable.NAME + " = ?";
-            c = dataBase.rawQuery(query, new String[] {_username});
+            c = dataBase.rawQuery(query, new String[]{_username});
             if (c.moveToFirst()) {
                 count = c.getInt(0);
             }
             return count > 0;
-        }
-        finally {
+        } finally {
             if (c != null) {
                 c.close();
             }
         }
     }
 
+    public boolean checkPassword(String userName, String passWord) {
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        SQLiteDatabase dataBase = databaseHelper.getReadableDatabase();
+
+        Cursor cursor = null;
+
+        try {
+
+            cursor = dataBase.rawQuery("SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.NAME + " = " + "\"" + userName + "\"", null);
+
+            if (cursor.getCount() > 0) {
+
+                cursor.moveToFirst();
+                return (passWord.equals(cursor.getString(cursor.getColumnIndex(UserTable.PASSWORD))));
+            }
+
+        } finally {
+
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        Log.d("pass", "checkPassword: some unknown error ");
+        return false;
+    }
 }
