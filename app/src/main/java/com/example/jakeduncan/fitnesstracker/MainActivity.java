@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
 
         if (verification(user)){
-            Toast.makeText(this, "User already exists.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "User exists. Logging in.", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, UserActivity.class);
             intent.putExtra("namekey", user);
             startActivity(intent);
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
             databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, values);
             databaseHelper.close();
-            Toast.makeText(this, "Stored new user.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Created and stored new user.", Toast.LENGTH_LONG).show();
 
             Intent intent = new Intent(this, UserActivity.class);
             intent.putExtra("namekey", user);
