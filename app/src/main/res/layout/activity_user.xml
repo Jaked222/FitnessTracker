@@ -19,4 +19,17 @@
         tools:layout_constraintTop_creator="1"
         android:layout_marginTop="14dp"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/distanceView"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        android:layout_marginEnd="106dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="15dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="106dp" />
 </android.support.constraint.ConstraintLayout>
