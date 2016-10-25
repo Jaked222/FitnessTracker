@@ -23,6 +23,10 @@ import com.google.android.gms.location.LocationServices;
 import java.text.DateFormat;
 import java.util.Date;
 
+//import android.location.Location;
+
+//import android.location.Location;
+
 public class UserActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
@@ -330,6 +334,7 @@ public class UserActivity extends AppCompatActivity implements
 
            try {
                mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+               Log.d(TAG, "onConnected:" + mCurrentLocation);
                mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
                updateUI();
            }catch (SecurityException e){
