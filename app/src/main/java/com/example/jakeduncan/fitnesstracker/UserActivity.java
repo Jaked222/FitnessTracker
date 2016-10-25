@@ -32,7 +32,7 @@ public class UserActivity extends AppCompatActivity {
         int distance = 0;
         try{
 
-            cursor = dataBase.rawQuery("SELECT * FROM users WHERE name = " + "\""+ userName + "\"", null);
+            cursor = dataBase.rawQuery("SELECT * FROM "+UserTable.TABLE_NAME+ " WHERE "+ UserTable.NAME + " = " + "\""+ userName + "\"", null);
 
             if(cursor.getCount() > 0) {
 
