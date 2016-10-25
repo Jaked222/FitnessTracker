@@ -21,8 +21,8 @@ public class UserActivity extends AppCompatActivity {
         String userName = intent.getStringExtra("namekey");
 
         userView.setText(userName);
-        distanceView.setText(String.valueOf(getDistance(userName)));
-
+        String distanceViewText = "Distance walked: " + getDistance(userName);
+        distanceView.setText(distanceViewText);
     }
 
     public int getDistance(String userName) {
