@@ -21,9 +21,10 @@ public class UserActivity extends AppCompatActivity {
         String userName = intent.getStringExtra("namekey");
 
         userView.setText(userName);
-        distanceView.setText("" + getDistance(userName));
+        distanceView.setText(String.valueOf(getDistance(userName)));
 
     }
+
     public int getDistance(String userName) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase dataBase = databaseHelper.getReadableDatabase();

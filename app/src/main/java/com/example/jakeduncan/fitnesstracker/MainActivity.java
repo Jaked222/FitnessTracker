@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         } finally {
             if (c != null) {
                 c.close();
+                dataBase.close();
             }
         }
     }
@@ -134,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (cursor != null) {
                 cursor.close();
+                dataBase.close();
             }
         }
         Log.d("pass", "checkPassword: some unknown error ");
