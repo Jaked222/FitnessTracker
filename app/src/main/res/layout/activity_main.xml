@@ -61,4 +61,18 @@
         android:layout_marginRight="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:text="Please note that the below button is for development and testing purposes only. I will leave this button here for the sake of whoever is reviewing this app. In a published version, this button would not be present."
+        android:layout_width="253dp"
+        android:layout_height="105dp"
+        android:id="@+id/textView"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/dev"
+        android:layout_marginBottom="8dp" />
 </android.support.constraint.ConstraintLayout>
