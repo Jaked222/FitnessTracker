@@ -80,6 +80,8 @@ public class UserActivity extends AppCompatActivity implements
 
     private double oldLat;
     private double oldLong;
+    public boolean helper = true;
+    public float[] results = new float[3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,8 +239,7 @@ public class UserActivity extends AppCompatActivity implements
             mStopUpdatesButton.setEnabled(false);
         }
     }
-    public boolean helper = true;
-    public float[] results = new float[3];
+
     //updates UI
     private void updateUI() {
         mLatitudeTextView.setText(String.format("%s: %f", mLatitudeLabel,
@@ -248,10 +249,15 @@ public class UserActivity extends AppCompatActivity implements
         mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
                 mLastUpdateTime));
 
+
         checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), helper);
         helper = false;
     }
-
+    //checks the distance between the latitudes at each update. The helper boolean here is needed
+    //to set the initial start point for lat and long. NOTE:: this current functionality is flawed.
+    //if a person presses start, then stop, then moves to a far distance, then start again,
+    //it will not work as intended. This currently only works when your last STOP WALKING press
+    //is near to your next START WALKING press.
     public void checkDistanceBetween(double startLatitude, double startLongitude, boolean help){
 
         if (help){
