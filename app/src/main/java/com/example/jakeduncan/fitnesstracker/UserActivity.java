@@ -36,8 +36,10 @@ public class UserActivity extends AppCompatActivity implements
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      * 10 seconds is chosen for battery saving purposes, as opposed to 5 seconds for accuracy.
+     * As a further note, there seems to be a margin of error of about 10 meters. I will probably
+     * keep frequency set at 30 seconds in order to keep this margin from being entered too many times.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -96,7 +98,7 @@ public class UserActivity extends AppCompatActivity implements
         String userName = intent.getStringExtra("namekey");
 
         userView.setText(userName);
-        String distanceViewText = "Distance walked: " + getUserDistance(userName);
+        String distanceViewText = "Walked: " + getUserDistance(userName);
         distanceView.setText(distanceViewText);
 
 
@@ -278,26 +280,15 @@ public class UserActivity extends AppCompatActivity implements
     public void writeDistanceToDatabase(float distance, String user){
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase writableDB = databaseHelper.getWritableDatabase();
-        SQLiteDatabase dataBase = databaseHelper.getReadableDatabase();
-        Cursor cursor = null;
-        float currentDistance = 0;
 
         try {
-           // cursor = dataBase.rawQuery("SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"", null);
-           writableDB.execSQL("UPDATE users SET distance="+distance+ " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"");
 
-            dataBase = databaseHelper.getReadableDatabase();
-            cursor = dataBase.rawQuery("SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"", null);
-            if (cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                currentDistance = cursor.getFloat(cursor.getColumnIndex(UserTable.DISTANCE));
-            }
+           writableDB.execSQL("UPDATE users SET distance="+distance+
+                   " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"");
+
         } finally {
-                Log.d(TAG, String.valueOf(currentDistance));
-                dataBase.close();
+                Log.d(TAG, String.valueOf(getUserDistance(user)));
                 writableDB.close();
-                cursor.close();
-
         }
     }
 
@@ -427,12 +418,12 @@ public class UserActivity extends AppCompatActivity implements
     }
 
 
-    public int getUserDistance(String userName) {
+    public float getUserDistance(String userName) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase dataBase = databaseHelper.getReadableDatabase();
 
         Cursor cursor = null;
-        int distance = 0;
+        float distance = 0;
         try{
 
             cursor = dataBase.rawQuery("SELECT * FROM "+UserTable.TABLE_NAME+ " WHERE "+ UserTable.NAME + " = " + "\""+ userName + "\"", null);
@@ -440,7 +431,7 @@ public class UserActivity extends AppCompatActivity implements
             if(cursor.getCount() > 0) {
 
                 cursor.moveToFirst();
-                distance = cursor.getInt(cursor.getColumnIndex(UserTable.DISTANCE));
+                distance = cursor.getFloat(cursor.getColumnIndex(UserTable.DISTANCE));
             }
 
             return distance;
