@@ -94,7 +94,7 @@ public class UserActivity extends AppCompatActivity implements
 
 
 
-        
+
         mStartUpdatesButton = (Button) findViewById(R.id.startWalkingButton);
         mStartUpdatesButton.setOnClickListener(new View.OnClickListener() {
             @Override
