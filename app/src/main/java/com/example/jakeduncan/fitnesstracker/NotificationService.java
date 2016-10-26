@@ -17,6 +17,7 @@ import android.util.Log;
 
 public class NotificationService extends IntentService {
 
+    private static boolean NotificationsOn;
 
     public NotificationService() {
         super("Service");
@@ -27,17 +28,18 @@ public class NotificationService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d("asd", "onHandleIntent: getting in");
 
+        if (NotificationsOn) {
 
-        makeNotification();
+            makeNotification();
 
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
+            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
 
-        alarm.cancel(pintent);
-        //wait an hour before calling this service again, repeating the notification.
-        alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()
-                + 60000 * 60, pintent);
-
+            alarm.cancel(pintent);
+            //wait an hour before calling this service again, repeating the notification.
+            alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()
+                    + 60000 * 60, pintent);
+        }
     }
 
     public void makeNotification() {
@@ -55,5 +57,8 @@ public class NotificationService extends IntentService {
 
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(300);
+    }
+    public static void turnOnOrOff(boolean b){
+        NotificationsOn = b;
     }
 }
