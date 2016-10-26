@@ -99,7 +99,7 @@ public class UserActivity extends AppCompatActivity implements
         String userName = intent.getStringExtra("namekey");
 
         userView.setText(userName);
-        String distanceViewText = "Walked: " + getUserDistance(userName);
+        String distanceViewText = "Walked: " + getUserDistance(userName) + "m";
         distanceView.setText(distanceViewText);
 
 
@@ -279,7 +279,7 @@ public class UserActivity extends AppCompatActivity implements
         }
         Log.d(TAG, "results[0]: " + results[0]);
 
-            String distanceCalcText = "Travelled(since last update): " + String.valueOf(results[0]);
+            String distanceCalcText = "Travelled(since last update): " + String.valueOf(results[0] + "m");
             distanceCalcView.setText(distanceCalcText);
             writeDistanceToDatabase(results[0], getIntent().getStringExtra("namekey"));
 
@@ -297,7 +297,7 @@ public class UserActivity extends AppCompatActivity implements
 
         } finally {
                 Log.d(TAG, String.valueOf(getUserDistance(user)));
-            String distanceViewText = "Walked: " + getUserDistance(user);
+            String distanceViewText = "Walked: " + getUserDistance(user) + "m";
             distanceView.setText(distanceViewText);
                 writableDB.close();
                 databaseHelper.close();
