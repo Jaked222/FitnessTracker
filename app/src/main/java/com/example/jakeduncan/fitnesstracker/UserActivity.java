@@ -125,6 +125,10 @@ public class UserActivity extends AppCompatActivity implements
                    mRequestingLocationUpdates = false;
                    setButtonsEnabledState();
                    stopLocationUpdates();
+                //these two are used to help with calculating the distance between
+                //lat/long for the walker. See comments on checkDistanceBetween method.
+                   results[0] = 0;
+                   isFirst = true;
                }
            }
        });
@@ -257,10 +261,10 @@ public class UserActivity extends AppCompatActivity implements
         isFirst = false;
     }
      /**Checks the distance between the latitudes at each update. The isFirst boolean here is needed
-     *to set the initial start point for lat and long. NOTE:: this current functionality is flawed.
-     *If a person presses start, then stop, then moves to a far distance, then start again,
-     *it will not work as intended. This currently only works when your last STOP WALKING press
-     is near to your next START WALKING press.
+     *to set the initial start point for lat and long. This is how I have a starting point for walking.
+      * when the stop button is pressed, this is set back to true. The reason for this is that if a person
+      * presses start, then stop, then moves to a far off location, and presses start again, we do not want
+      * the app to calculate the distance between the first and second mentioned locations.
      */
     public void checkDistanceBetween(double startLatitude, double startLongitude, boolean firstRun){
 
