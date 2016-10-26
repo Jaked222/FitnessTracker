@@ -107,7 +107,30 @@ public class UserActivity extends AppCompatActivity implements
 
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.startWalkingButton);
+        mStartUpdatesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mRequestingLocationUpdates) {
+                    mRequestingLocationUpdates = true;
+                    setButtonsEnabledState();
+                    startLocationUpdates();
+                }
+            }
+        });
+
         mStopUpdatesButton = (Button) findViewById(R.id.stopWalkingButton);
+        mStopUpdatesButton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               if (mRequestingLocationUpdates) {
+                   mRequestingLocationUpdates = false;
+                   setButtonsEnabledState();
+                   stopLocationUpdates();
+               }
+           }
+       });
+
+
         mLatitudeTextView = (TextView) findViewById(R.id.latitudeView);
         mLongitudeTextView = (TextView) findViewById(R.id.longitudeView);
         mLastUpdateTimeTextView = (TextView) findViewById(R.id.timeView);

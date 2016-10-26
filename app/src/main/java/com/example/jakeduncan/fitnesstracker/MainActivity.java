@@ -16,7 +16,8 @@ import android.widget.Toast;
 import static com.example.jakeduncan.fitnesstracker.R.id.pass;
 import static com.example.jakeduncan.fitnesstracker.UserTable.TABLE_NAME;
 
-
+//NOTE:: BE SURE TO ENABLE LOCATION PERMISSIONS MANUALLY ON YOUR LOCAL DEVICE.
+//GO TO APPS>SETTINGS>FitnessTracker>PERMISSIONS. 
 public class MainActivity extends AppCompatActivity {
     Button dev;
     Button signIn;
