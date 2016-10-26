@@ -35,8 +35,9 @@ public class UserActivity extends AppCompatActivity implements
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     * 10 seconds is chosen for battery saving purposes, as opposed to 5 seconds for accuracy.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -60,7 +61,7 @@ public class UserActivity extends AppCompatActivity implements
     protected TextView mLastUpdateTimeTextView;
     protected TextView mLatitudeTextView;
     protected TextView mLongitudeTextView;
-
+    protected TextView distanceCalcView;
     // Labels.
     protected String mLatitudeLabel;
     protected String mLongitudeLabel;
@@ -77,6 +78,9 @@ public class UserActivity extends AppCompatActivity implements
      */
     protected String mLastUpdateTime;
 
+    private double oldLat;
+    private double oldLong;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,12 +88,13 @@ public class UserActivity extends AppCompatActivity implements
 
         TextView userView = (TextView) findViewById(R.id.userView);
         TextView distanceView = (TextView) findViewById(R.id.distanceView);
+        distanceCalcView = (TextView) findViewById(R.id.distanceCalcView);
 
         Intent intent = getIntent();
         String userName = intent.getStringExtra("namekey");
 
         userView.setText(userName);
-        String distanceViewText = "Distance walked: " + getDistance(userName);
+        String distanceViewText = "Distance walked: " + getUserDistance(userName);
         distanceView.setText(distanceViewText);
 
 
@@ -232,7 +237,8 @@ public class UserActivity extends AppCompatActivity implements
             mStopUpdatesButton.setEnabled(false);
         }
     }
-
+    public boolean helper = true;
+    public float[] results = new float[3];
     //updates UI
     private void updateUI() {
         mLatitudeTextView.setText(String.format("%s: %f", mLatitudeLabel,
@@ -241,8 +247,24 @@ public class UserActivity extends AppCompatActivity implements
                 mCurrentLocation.getLongitude()));
         mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
                 mLastUpdateTime));
+
+        checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), helper);
+        helper = false;
     }
 
+    public void checkDistanceBetween(double startLatitude, double startLongitude, boolean help){
+
+        if (help){
+            oldLat = startLatitude;
+            oldLong = startLongitude;
+        }
+        else {
+            mCurrentLocation.distanceBetween(oldLat, oldLong, startLatitude, startLongitude, results);
+        }
+        if (results != null) {
+              distanceCalcView.setText(String.valueOf(results[0]));
+        }
+    }
     /**
      * Removes location updates from the FusedLocationApi.
      */
@@ -368,7 +390,7 @@ public class UserActivity extends AppCompatActivity implements
     }
 
 
-    public int getDistance(String userName) {
+    public int getUserDistance(String userName) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase dataBase = databaseHelper.getReadableDatabase();
 

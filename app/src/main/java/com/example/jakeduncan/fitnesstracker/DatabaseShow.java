@@ -18,7 +18,7 @@ public class DatabaseShow extends AppCompatActivity {
         int[] to = new int[] {R.id.user_name, R.id.user_distance, R.id.user_pass};
 
         ListView productList = (ListView) findViewById(R.id.products_list);
-        productList.setAdapter(new SimpleCursorAdapter(this, R.layout.user_row, databaseHelper.getProductCursor(), from, to));
+        productList.setAdapter(new SimpleCursorAdapter(this, R.layout.user_row, databaseHelper.getUserCursor(), from, to));
         databaseHelper.close();
     }
 }
