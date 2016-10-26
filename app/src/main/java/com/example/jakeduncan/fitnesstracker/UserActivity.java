@@ -64,6 +64,7 @@ public class UserActivity extends AppCompatActivity implements
     protected TextView mLatitudeTextView;
     protected TextView mLongitudeTextView;
     protected TextView distanceCalcView;
+    protected TextView distanceView;
     // Labels.
     protected String mLatitudeLabel;
     protected String mLongitudeLabel;
@@ -91,7 +92,7 @@ public class UserActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_user);
 
         TextView userView = (TextView) findViewById(R.id.userView);
-        TextView distanceView = (TextView) findViewById(R.id.distanceView);
+        distanceView = (TextView) findViewById(R.id.distanceView);
         distanceCalcView = (TextView) findViewById(R.id.distanceCalcView);
 
         Intent intent = getIntent();
@@ -273,7 +274,9 @@ public class UserActivity extends AppCompatActivity implements
             mCurrentLocation.distanceBetween(oldLat, oldLong, startLatitude, startLongitude, results);
         }
         Log.d(TAG, "results[0]: " + results[0]);
-            distanceCalcView.setText(String.valueOf(results[0]));
+
+            String distanceCalcText = "Travelled(since last update): " + String.valueOf(results[0]);
+            distanceCalcView.setText(distanceCalcText);
             writeDistanceToDatabase(results[0], getIntent().getStringExtra("namekey"));
 
     }
@@ -290,6 +293,8 @@ public class UserActivity extends AppCompatActivity implements
 
         } finally {
                 Log.d(TAG, String.valueOf(getUserDistance(user)));
+            String distanceViewText = "Walked: " + getUserDistance(user);
+            distanceView.setText(distanceViewText);
                 writableDB.close();
                 databaseHelper.close();
         }
