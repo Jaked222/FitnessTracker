@@ -58,7 +58,7 @@ public class UserActivity extends AppCompatActivity implements
     protected LocationRequest mLocationRequest;
     protected Location mCurrentLocation;
 
-
+    protected Button officeModeButton;
     protected Button mStartUpdatesButton;
     protected Button mStopUpdatesButton;
     protected TextView mLastUpdateTimeTextView;
@@ -109,7 +109,15 @@ public class UserActivity extends AppCompatActivity implements
         String distanceViewText = "Walked: " + getUserDistance(userName) + "m";
         distanceView.setText(distanceViewText);
 
-
+        officeModeButton = (Button) findViewById(R.id.officeModeButton);
+        officeModeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("officebutton", "onClick: here");
+                Intent notificationIntent = new Intent(UserActivity.this, NotificationService.class);
+                startService(notificationIntent);
+            }
+        });
 
 
         mStartUpdatesButton = (Button) findViewById(R.id.startWalkingButton);
