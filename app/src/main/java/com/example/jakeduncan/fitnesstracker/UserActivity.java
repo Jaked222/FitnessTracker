@@ -253,11 +253,12 @@ public class UserActivity extends AppCompatActivity implements
         checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), helper);
         helper = false;
     }
-    //checks the distance between the latitudes at each update. The helper boolean here is needed
-    //to set the initial start point for lat and long. NOTE:: this current functionality is flawed.
-    //if a person presses start, then stop, then moves to a far distance, then start again,
-    //it will not work as intended. This currently only works when your last STOP WALKING press
-    //is near to your next START WALKING press.
+     /**Checks the distance between the latitudes at each update. The helper boolean here is needed
+     *to set the initial start point for lat and long. NOTE:: this current functionality is flawed.
+     *If a person presses start, then stop, then moves to a far distance, then start again,
+     *it will not work as intended. This currently only works when your last STOP WALKING press
+     is near to your next START WALKING press.
+     */
     public void checkDistanceBetween(double startLatitude, double startLongitude, boolean help){
 
         if (help){
