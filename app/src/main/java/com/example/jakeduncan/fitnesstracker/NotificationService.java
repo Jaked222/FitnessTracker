@@ -34,7 +34,7 @@ public class NotificationService extends IntentService {
         PendingIntent pintent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
 
         alarm.cancel(pintent);
-
+        //wait an hour before calling this service again, repeating the notification.
         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()
                 + 60000 * 60, pintent);
 
