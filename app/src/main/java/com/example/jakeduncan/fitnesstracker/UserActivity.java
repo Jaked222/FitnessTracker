@@ -281,9 +281,11 @@ public class UserActivity extends AppCompatActivity implements
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase writableDB = databaseHelper.getWritableDatabase();
 
+        float newTotalDistance = getUserDistance(user) + distance;
+
         try {
 
-           writableDB.execSQL("UPDATE users SET distance="+distance+
+           writableDB.execSQL("UPDATE users SET distance="+newTotalDistance+
                    " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"");
 
         } finally {
