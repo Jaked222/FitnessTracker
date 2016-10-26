@@ -37,7 +37,7 @@ public class UserActivity extends AppCompatActivity implements
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      * 10 seconds is chosen for battery saving purposes, as opposed to 5 seconds for accuracy.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -80,7 +80,7 @@ public class UserActivity extends AppCompatActivity implements
 
     private double oldLat;
     private double oldLong;
-    public boolean helper = true;
+    public boolean isFirst = true;
     public float[] results = new float[3];
 
     @Override
@@ -249,29 +249,59 @@ public class UserActivity extends AppCompatActivity implements
         mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
                 mLastUpdateTime));
 
-
-        checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), helper);
-        helper = false;
+        //isFirst is permanently assigned to false after the first run of this method.
+        checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), isFirst);
+        isFirst = false;
     }
-     /**Checks the distance between the latitudes at each update. The helper boolean here is needed
+     /**Checks the distance between the latitudes at each update. The isFirst boolean here is needed
      *to set the initial start point for lat and long. NOTE:: this current functionality is flawed.
      *If a person presses start, then stop, then moves to a far distance, then start again,
      *it will not work as intended. This currently only works when your last STOP WALKING press
      is near to your next START WALKING press.
      */
-    public void checkDistanceBetween(double startLatitude, double startLongitude, boolean help){
+    public void checkDistanceBetween(double startLatitude, double startLongitude, boolean firstRun){
 
-        if (help){
+        if (firstRun){
             oldLat = startLatitude;
             oldLong = startLongitude;
         }
         else {
+            //this calculates the distance between old/new lat and long, then adds
+            //the value to results[0]. If there's already a value there, it adds them together.
             mCurrentLocation.distanceBetween(oldLat, oldLong, startLatitude, startLongitude, results);
         }
         if (results != null) {
-              distanceCalcView.setText(String.valueOf(results[0]));
+            distanceCalcView.setText(String.valueOf(results[0]));
+            writeDistanceToDatabase(results[0], getIntent().getStringExtra("namekey"));
         }
     }
+    public void writeDistanceToDatabase(float distance, String user){
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        SQLiteDatabase writableDB = databaseHelper.getWritableDatabase();
+        SQLiteDatabase dataBase = databaseHelper.getReadableDatabase();
+        Cursor cursor = null;
+        float currentDistance = 0;
+
+        try {
+           // cursor = dataBase.rawQuery("SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"", null);
+           writableDB.execSQL("UPDATE users SET distance="+distance+ " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"");
+
+            dataBase = databaseHelper.getReadableDatabase();
+            cursor = dataBase.rawQuery("SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"", null);
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                currentDistance = cursor.getFloat(cursor.getColumnIndex(UserTable.DISTANCE));
+            }
+        } finally {
+                Log.d(TAG, String.valueOf(currentDistance));
+                dataBase.close();
+                writableDB.close();
+                cursor.close();
+
+        }
+    }
+
+
     /**
      * Removes location updates from the FusedLocationApi.
      */

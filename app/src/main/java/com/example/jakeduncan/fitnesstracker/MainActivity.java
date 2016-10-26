@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             ContentValues values = new ContentValues();
             values.put(UserTable.NAME, user);
-            values.put(UserTable.DISTANCE, 50);
+            values.put(UserTable.DISTANCE, 0);
             values.put(UserTable.PASSWORD, pass);
 
             databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, values);
