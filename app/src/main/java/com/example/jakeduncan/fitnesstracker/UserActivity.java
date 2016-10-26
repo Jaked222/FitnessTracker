@@ -38,6 +38,7 @@ public class UserActivity extends AppCompatActivity implements
      * 10 seconds is chosen for battery saving purposes, as opposed to 5 seconds for accuracy.
      * As a further note, there seems to be a margin of error of about 10 meters. I will probably
      * keep frequency set at 30 seconds in order to keep this margin from being entered too many times.
+     * This app until further notice will be best for tracking longer distances, for longer walks.
      */
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
@@ -102,7 +103,7 @@ public class UserActivity extends AppCompatActivity implements
         String userName = intent.getStringExtra("namekey");
 
         milestonesView = (TextView) findViewById(R.id.milestoneView);
-        milestonesView.setText("Milestones(1000f): " + checkForMilestones(userName));
+        milestonesView.setText("0");
 
         userView.setText(userName);
         String distanceViewText = "Walked: " + getUserDistance(userName) + "m";
@@ -264,7 +265,7 @@ public class UserActivity extends AppCompatActivity implements
 
         //isFirst is permanently assigned to false after the first run of this method.
         checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), isFirst);
-        milestonesView.setText("Milestones(1000f): " + checkForMilestones(getIntent().getStringExtra("namekey")));
+        milestonesView.setText("0");
         isFirst = false;
     }
      /**Checks the distance between the latitudes at each update. The isFirst boolean here is needed
