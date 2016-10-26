@@ -39,7 +39,7 @@ public class UserActivity extends AppCompatActivity implements
      * As a further note, there seems to be a margin of error of about 10 meters. I will probably
      * keep frequency set at 30 seconds in order to keep this margin from being entered too many times.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -451,6 +451,8 @@ public class UserActivity extends AppCompatActivity implements
 
             if (cursor != null) {
                 cursor.close();
+                databaseHelper.close();
+                dataBase.close();
             }
         }
     }
