@@ -65,6 +65,7 @@ public class UserActivity extends AppCompatActivity implements
     protected TextView mLongitudeTextView;
     protected TextView distanceCalcView;
     protected TextView distanceView;
+    protected TextView milestonesView;
     // Labels.
     protected String mLatitudeLabel;
     protected String mLongitudeLabel;
@@ -95,8 +96,13 @@ public class UserActivity extends AppCompatActivity implements
         distanceView = (TextView) findViewById(R.id.distanceView);
         distanceCalcView = (TextView) findViewById(R.id.distanceCalcView);
 
+
+
         Intent intent = getIntent();
         String userName = intent.getStringExtra("namekey");
+
+        milestonesView = (TextView) findViewById(R.id.milestoneView);
+        milestonesView.setText("Milestones(1000f): " + checkForMilestones(userName));
 
         userView.setText(userName);
         String distanceViewText = "Walked: " + getUserDistance(userName) + "m";
@@ -258,6 +264,7 @@ public class UserActivity extends AppCompatActivity implements
 
         //isFirst is permanently assigned to false after the first run of this method.
         checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), isFirst);
+        milestonesView.setText("Milestones(1000f): " + checkForMilestones(getIntent().getStringExtra("namekey")));
         isFirst = false;
     }
      /**Checks the distance between the latitudes at each update. The isFirst boolean here is needed
@@ -302,6 +309,16 @@ public class UserActivity extends AppCompatActivity implements
                 writableDB.close();
                 databaseHelper.close();
         }
+    }
+    public int checkForMilestones(String user){
+        int milestones = 0;
+        float currentDistanceWalked = getUserDistance(user);
+        //304.8 is the conversion of meters to feet. there is probably a more
+        //interesting way to do this calculation.
+        while ((currentDistanceWalked - 304.8) > 0){
+            milestones++;
+        }
+        return milestones;
     }
 
 
