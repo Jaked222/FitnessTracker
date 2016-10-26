@@ -272,10 +272,10 @@ public class UserActivity extends AppCompatActivity implements
             //the value to results[0]. If there's already a value there, it adds them together.
             mCurrentLocation.distanceBetween(oldLat, oldLong, startLatitude, startLongitude, results);
         }
-        if (results != null) {
+        Log.d(TAG, "results[0]: " + results[0]);
             distanceCalcView.setText(String.valueOf(results[0]));
             writeDistanceToDatabase(results[0], getIntent().getStringExtra("namekey"));
-        }
+
     }
     public void writeDistanceToDatabase(float distance, String user){
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
