@@ -307,19 +307,12 @@ public class UserActivity extends AppCompatActivity implements
                 Log.d(TAG, String.valueOf(getUserDistance(user)));
             String distanceViewText = "Walked: " + getUserDistance(user) + "m";
             distanceView.setText(distanceViewText);
+
+            if ((getUserDistance(user) % 304.8) <=304.8)
+
                 writableDB.close();
                 databaseHelper.close();
         }
-    }
-    public int checkForMilestones(String user){
-        int milestones = 0;
-        float currentDistanceWalked = getUserDistance(user);
-        //304.8 is the conversion of meters to feet. there is probably a more
-        //interesting way to do this calculation.
-        while ((currentDistanceWalked - 304.8) > 0){
-            milestones++;
-        }
-        return milestones;
     }
 
 
