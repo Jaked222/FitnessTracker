@@ -303,7 +303,7 @@ public class UserActivity extends AppCompatActivity implements
         //isFirst is assigned to false after the first run of this method.
         checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), isFirst);
         checkMilestone(getIntent().getStringExtra("namekey"));
-        
+
         isFirst = false;
     }
 

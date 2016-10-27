@@ -36,3 +36,4 @@ sleeping and waking up phone quickly bugs it out.
 
 problems with the accuracy of GPS. checking accelerometer on standing still could be useful to becoming more accurate. Longer intervals may help with this in the context of walking.
 
+experiencing a minor bug where the distance between stopping and starting walking will be added to the total walking distance, despite code made to usually stop this from happening.
