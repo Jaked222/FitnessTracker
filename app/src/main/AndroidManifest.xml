@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.jakeduncan.fitnesstracker">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,8 +19,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".UserActivity" />
+
         <service android:name=".NotificationService" />
-        <activity android:name=".DatabaseShow"></activity>
+
+        <activity android:name=".DatabaseShow" />
+        <activity android:name=".LeaderboardShow"></activity>
     </application>
 
 </manifest>

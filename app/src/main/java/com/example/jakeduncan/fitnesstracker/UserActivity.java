@@ -62,6 +62,7 @@ public class UserActivity extends AppCompatActivity implements
     protected LocationRequest mLocationRequest;
     protected Location mCurrentLocation;
 
+    protected Button leaderBoardButton;
     protected Button officeModeOn;
     protected Button officeModeOff;
     protected Button mStartUpdatesButton;
@@ -71,7 +72,7 @@ public class UserActivity extends AppCompatActivity implements
     protected TextView mLongitudeTextView;
     protected TextView distanceCalcView;
     protected TextView distanceView;
-    protected TextView milestonesView;
+
     // Labels.
     protected String mLatitudeLabel;
     protected String mLongitudeLabel;
@@ -88,7 +89,6 @@ public class UserActivity extends AppCompatActivity implements
      */
     protected String mLastUpdateTime;
 
-    private int milestones = 0;
     private double curr;
     private double interval = 304.8;
     private double prev;
@@ -113,6 +113,15 @@ public class UserActivity extends AppCompatActivity implements
         userView.setText(userName);
         String distanceViewText = "Walked: " + getUserDistance(userName) + "m";
         distanceView.setText(distanceViewText);
+
+        leaderBoardButton = (Button) findViewById(R.id.leaderBoardButton);
+        leaderBoardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserActivity.this, LeaderboardShow.class);
+                startActivity(intent);
+            }
+        });
 
         officeModeOff = (Button) findViewById(R.id.officeModeOff);
         officeModeOff.setOnClickListener(new View.OnClickListener() {
