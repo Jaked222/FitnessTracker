@@ -93,7 +93,6 @@ public class UserActivity extends AppCompatActivity implements
     Calendar calendar = Calendar.getInstance();
     private int day = calendar.get(Calendar.DAY_OF_WEEK);
     private float dailyDistance = 0;
-    private float countFrom;
     private double curr;
     private double interval = 304.8;
     private double prev;
@@ -188,7 +187,6 @@ public class UserActivity extends AppCompatActivity implements
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
-        countFrom = getUserDistance(getIntent().getStringExtra("namekey"));
 
         // Update values using data stored in the Bundle.
         updateValuesFromBundle(savedInstanceState);
@@ -305,7 +303,6 @@ public class UserActivity extends AppCompatActivity implements
         //isFirst is assigned to false after the first run of this method.
         checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), isFirst);
         checkMilestone(getIntent().getStringExtra("namekey"));
-        updateDailyStats(getIntent().getStringExtra("namekey"));
         isFirst = false;
     }
 
@@ -332,7 +329,7 @@ public class UserActivity extends AppCompatActivity implements
         String distanceCalcText = "Travelled(since last update): " + String.valueOf(results[0] + "m");
         distanceCalcView.setText(distanceCalcText);
         writeDistanceToDatabase(results[0], getIntent().getStringExtra("namekey"));
-
+        updateDailyStats(getIntent().getStringExtra("namekey"), results[0]);
     }
 
     public void writeDistanceToDatabase(float distance, String user) {
@@ -352,7 +349,7 @@ public class UserActivity extends AppCompatActivity implements
             distanceView.setText(distanceViewText);
 
 
-                writableDB.close();
+            writableDB.close();
             databaseHelper.close();
         }
     }
@@ -385,25 +382,26 @@ public class UserActivity extends AppCompatActivity implements
     }
 
 
-    public void updateDailyStats(String user){
-    calendar = Calendar.getInstance();
-    int today = calendar.get(Calendar.DAY_OF_WEEK);
+    public void updateDailyStats(String user, float walked) {
+        calendar = Calendar.getInstance();
+        int today = calendar.get(Calendar.DAY_OF_WEEK);
 
-    if (today != day){
-        //set user daily stat to 0
-        addStatToDatabase(0, user);
-        day = today;
-        countFrom = getUserDistance(user);
-        dailyDistance = getUserStat(user);
+        if (today != day) {
+            //set user daily stat to 0
+            day = today;
+
+            dailyDistance = 0;
+            addStatToDatabase(dailyDistance, user);
+            dailyView.setText("daily walked:" + String.valueOf(getUserStat(user)));
+        } else {
+            dailyDistance = getUserStat(user) + walked;
+
+            addStatToDatabase(dailyDistance, user);
+            dailyView.setText("daily walked:" + String.valueOf(getUserStat(user)));
+        }
     }
-        
-       dailyDistance = getUserStat(user);
 
-        addStatToDatabase(dailyDistance, user);
-         dailyView.setText("daily walked:" + String.valueOf(getUserStat(user)));
-
-    }
-    public void addStatToDatabase(float stat, String user){
+    public void addStatToDatabase(float stat, String user) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase writableDB = databaseHelper.getWritableDatabase();
 
@@ -415,10 +413,11 @@ public class UserActivity extends AppCompatActivity implements
 
         } finally {
             Log.d(TAG, "addStatToDatabase:" + getUserStat(user));
-                writableDB.close();
+            writableDB.close();
             databaseHelper.close();
         }
     }
+
     /**
      * Removes location updates from the FusedLocationApi.
      */
@@ -543,7 +542,7 @@ public class UserActivity extends AppCompatActivity implements
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    public float getUserStat(String userName){
+    public float getUserStat(String userName) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase dataBase = databaseHelper.getReadableDatabase();
 
