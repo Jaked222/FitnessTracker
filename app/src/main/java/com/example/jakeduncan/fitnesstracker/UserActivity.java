@@ -1,10 +1,14 @@
 package com.example.jakeduncan.fitnesstracker;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +44,7 @@ public class UserActivity extends AppCompatActivity implements
      * keep frequency set at 30 seconds in order to keep this margin from being entered too many times.
      * This app until further notice will be best for tracking longer distances, for longer walks.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -84,6 +88,10 @@ public class UserActivity extends AppCompatActivity implements
      */
     protected String mLastUpdateTime;
 
+    private int milestones = 0;
+    private double curr;
+    private double interval = 304.8;
+    private double prev;
     private double oldLat;
     private double oldLong;
     public boolean isFirst = true;
@@ -99,12 +107,8 @@ public class UserActivity extends AppCompatActivity implements
         distanceCalcView = (TextView) findViewById(R.id.distanceCalcView);
 
 
-
         Intent intent = getIntent();
         String userName = intent.getStringExtra("namekey");
-
-        milestonesView = (TextView) findViewById(R.id.milestoneView);
-        milestonesView.setText("0");
 
         userView.setText(userName);
         String distanceViewText = "Walked: " + getUserDistance(userName) + "m";
@@ -144,19 +148,19 @@ public class UserActivity extends AppCompatActivity implements
 
         mStopUpdatesButton = (Button) findViewById(R.id.stopWalkingButton);
         mStopUpdatesButton.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               if (mRequestingLocationUpdates) {
-                   mRequestingLocationUpdates = false;
-                   setButtonsEnabledState();
-                   stopLocationUpdates();
-                //these two are used to help with calculating the distance between
-                //lat/long for the walker. See comments on checkDistanceBetween method.
-                   results[0] = 0;
-                   isFirst = true;
-               }
-           }
-       });
+            @Override
+            public void onClick(View v) {
+                if (mRequestingLocationUpdates) {
+                    mRequestingLocationUpdates = false;
+                    setButtonsEnabledState();
+                    stopLocationUpdates();
+                    //these two are used to help with calculating the distance between
+                    //lat/long for the walker. See comments on checkDistanceBetween method.
+                    results[0] = 0;
+                    isFirst = true;
+                }
+            }
+        });
 
 
         mLatitudeTextView = (TextView) findViewById(R.id.latitudeView);
@@ -178,6 +182,7 @@ public class UserActivity extends AppCompatActivity implements
         // API.
         buildGoogleApiClient();
     }
+
     /**
      * Updates fields based on data stored in the bundle.
      *
@@ -209,6 +214,7 @@ public class UserActivity extends AppCompatActivity implements
             updateUI();
         }
     }
+
     /**
      * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the
      * LocationServices API.
@@ -254,12 +260,12 @@ public class UserActivity extends AppCompatActivity implements
     protected void startLocationUpdates() {
         // The final argument to {@code requestLocationUpdates()} is a LocationListener
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
-       try {
-           LocationServices.FusedLocationApi.requestLocationUpdates(
-                   mGoogleApiClient, mLocationRequest, this);
-       } catch(SecurityException e){
-           Log.d(TAG, "startLocationUpdates: exception");
-       }
+        try {
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
+        } catch (SecurityException e) {
+            Log.d(TAG, "startLocationUpdates: exception");
+        }
     }
 
     private void setButtonsEnabledState() {
@@ -281,36 +287,63 @@ public class UserActivity extends AppCompatActivity implements
         mLastUpdateTimeTextView.setText(String.format("%s: %s", mLastUpdateTimeLabel,
                 mLastUpdateTime));
 
-        //isFirst is permanently assigned to false after the first run of this method.
+        //isFirst is assigned to false after the first run of this method.
         checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), isFirst);
-        milestonesView.setText("0");
+        checkMilestone(getIntent().getStringExtra("namekey"));
         isFirst = false;
     }
-     /**Checks the distance between the latitudes at each update. The isFirst boolean here is needed
-     *to set the initial start point for lat and long. This is how I have a starting point for walking.
-      * when the stop button is pressed, this is set back to true. The reason for this is that if a person
-      * presses start, then stop, then moves to a far off location, and presses start again, we do not want
-      * the app to calculate the distance between the first and second mentioned locations.
-     */
-    public void checkDistanceBetween(double startLatitude, double startLongitude, boolean firstRun){
 
-        if (firstRun){
+    public void checkMilestone(String user) {
+        if (isFirst) {
+            prev = getUserDistance(user);
+        }
+        curr = getUserDistance(user);
+        if (Math.floor(curr / interval) > Math.floor(prev / interval)) {
+            milestonePassed();
+        }
+        prev = curr; // For next round
+    }
+    public void milestonePassed(){
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_cast_grey)
+                        .setContentTitle("Milestone")
+                        .setContentText("Walked 1000 feet! Good job!");
+
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        int mNotificationId = 001;
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(300);
+    }
+    /**
+     * Checks the distance between the latitudes at each update. The isFirst boolean here is needed
+     * to set the initial start point for lat and long. This is how I have a starting point for walking.
+     * when the stop button is pressed, this is set back to true. The reason for this is that if a person
+     * presses start, then stop, then moves to a far off location, and presses start again, we do not want
+     * the app to calculate the distance between the first and second mentioned locations.
+     */
+    public void checkDistanceBetween(double startLatitude, double startLongitude, boolean firstRun) {
+
+        if (firstRun) {
             oldLat = startLatitude;
             oldLong = startLongitude;
-        }
-        else {
+        } else {
             //this calculates the distance between old/new lat and long, then adds
             //the value to results[0]. If there's already a value there, it adds them together.
             mCurrentLocation.distanceBetween(oldLat, oldLong, startLatitude, startLongitude, results);
         }
         Log.d(TAG, "results[0]: " + results[0]);
 
-            String distanceCalcText = "Travelled(since last update): " + String.valueOf(results[0] + "m");
-            distanceCalcView.setText(distanceCalcText);
-            writeDistanceToDatabase(results[0], getIntent().getStringExtra("namekey"));
+        String distanceCalcText = "Travelled(since last update): " + String.valueOf(results[0] + "m");
+        distanceCalcView.setText(distanceCalcText);
+        writeDistanceToDatabase(results[0], getIntent().getStringExtra("namekey"));
 
     }
-    public void writeDistanceToDatabase(float distance, String user){
+
+    public void writeDistanceToDatabase(float distance, String user) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase writableDB = databaseHelper.getWritableDatabase();
 
@@ -318,18 +351,18 @@ public class UserActivity extends AppCompatActivity implements
 
         try {
 
-           writableDB.execSQL("UPDATE users SET distance="+newTotalDistance+
-                   " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"");
+            writableDB.execSQL("UPDATE users SET distance=" + newTotalDistance +
+                    " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"");
 
         } finally {
-                Log.d(TAG, String.valueOf(getUserDistance(user)));
+            Log.d(TAG, String.valueOf(getUserDistance(user)));
             String distanceViewText = "Walked: " + getUserDistance(user) + "m";
             distanceView.setText(distanceViewText);
 
-            if ((getUserDistance(user) % 304.8) <=304.8)
+            if ((getUserDistance(user) % 304.8) <= 304.8)
 
                 writableDB.close();
-                databaseHelper.close();
+            databaseHelper.close();
         }
     }
 
@@ -400,14 +433,14 @@ public class UserActivity extends AppCompatActivity implements
         // is displayed as the activity is re-created.
         if (mCurrentLocation == null) {
 
-           try {
-               mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-               Log.d(TAG, "onConnected:" + mCurrentLocation);
-               mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-               updateUI();
-           }catch (SecurityException e){
-               Log.d(TAG, "onConnected: exception");
-           }
+            try {
+                mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                Log.d(TAG, "onConnected:" + mCurrentLocation);
+                mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+                updateUI();
+            } catch (SecurityException e) {
+                Log.d(TAG, "onConnected: exception");
+            }
 
 
         }
@@ -465,18 +498,18 @@ public class UserActivity extends AppCompatActivity implements
 
         Cursor cursor = null;
         float distance = 0;
-        try{
+        try {
 
-            cursor = dataBase.rawQuery("SELECT * FROM "+UserTable.TABLE_NAME+ " WHERE "+ UserTable.NAME + " = " + "\""+ userName + "\"", null);
+            cursor = dataBase.rawQuery("SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.NAME + " = " + "\"" + userName + "\"", null);
 
-            if(cursor.getCount() > 0) {
+            if (cursor.getCount() > 0) {
 
                 cursor.moveToFirst();
                 distance = cursor.getFloat(cursor.getColumnIndex(UserTable.DISTANCE));
             }
 
             return distance;
-        }finally {
+        } finally {
 
             if (cursor != null) {
                 cursor.close();
