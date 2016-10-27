@@ -39,12 +39,10 @@ public class UserActivity extends AppCompatActivity implements
 
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
-     * 10 seconds is chosen for battery saving purposes, as opposed to 5 seconds for accuracy.
-     * As a further note, there seems to be a margin of error of about 10 meters. I will probably
-     * keep frequency set at 30 seconds in order to keep this margin from being entered too many times.
-     * This app until further notice will be best for tracking longer distances, for longer walks.
+     * A longer interval is used to help eliminate the margin of error with the current latitude/longitude
+     * implementation. If this is sorted out, a shorter interval could be used to help be more accurate.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -312,7 +310,8 @@ public class UserActivity extends AppCompatActivity implements
         }
         prev = curr; // For next round
     }
-    public void milestonePassed(){
+
+    public void milestonePassed() {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_cast_grey)
@@ -327,6 +326,7 @@ public class UserActivity extends AppCompatActivity implements
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(300);
     }
+
     /**
      * Checks the distance between the latitudes at each update. The isFirst boolean here is needed
      * to set the initial start point for lat and long. This is how I have a starting point for walking.
