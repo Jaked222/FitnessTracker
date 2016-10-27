@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             values.put(UserTable.NAME, user);
             values.put(UserTable.DISTANCE, 0);
             values.put(UserTable.PASSWORD, pass);
+            values.put(UserTable.DAILY, 0);
 
             databaseHelper.getWritableDatabase().insert(TABLE_NAME, null, values);
             databaseHelper.close();

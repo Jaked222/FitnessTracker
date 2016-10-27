@@ -25,6 +25,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 //import android.location.Location;
@@ -42,7 +43,7 @@ public class UserActivity extends AppCompatActivity implements
      * A longer interval is used to help eliminate the margin of error with the current latitude/longitude
      * implementation. If this is sorted out, a shorter interval could be used to help be more accurate.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
@@ -70,6 +71,7 @@ public class UserActivity extends AppCompatActivity implements
     protected TextView mLongitudeTextView;
     protected TextView distanceCalcView;
     protected TextView distanceView;
+    protected TextView dailyView;
 
     // Labels.
     protected String mLatitudeLabel;
@@ -87,6 +89,10 @@ public class UserActivity extends AppCompatActivity implements
      */
     protected String mLastUpdateTime;
 
+
+    Calendar calendar = Calendar.getInstance();
+    private int day = calendar.get(Calendar.DAY_OF_WEEK);
+    private float dailyDistance = 0;
     private double curr;
     private double interval = 304.8;
     private double prev;
@@ -103,7 +109,7 @@ public class UserActivity extends AppCompatActivity implements
         TextView userView = (TextView) findViewById(R.id.userView);
         distanceView = (TextView) findViewById(R.id.distanceView);
         distanceCalcView = (TextView) findViewById(R.id.distanceCalcView);
-
+        dailyView = (TextView) findViewById(R.id.dailyView);
 
         Intent intent = getIntent();
         String userName = intent.getStringExtra("namekey");
@@ -297,7 +303,56 @@ public class UserActivity extends AppCompatActivity implements
         //isFirst is assigned to false after the first run of this method.
         checkDistanceBetween(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), isFirst);
         checkMilestone(getIntent().getStringExtra("namekey"));
+        //isFirst sometimes doesn't work.
         isFirst = false;
+    }
+
+
+    /**
+     * Checks the distance between the latitudes at each update. The isFirst boolean here is needed
+     * to set the initial start point for lat and long. This is how I have a starting point for walking.
+     * when the stop button is pressed, this is set back to true. The reason for this is that if a person
+     * presses start, then stop, then moves to a far off location, and presses start again, we do not want
+     * the app to calculate the distance between the first and second mentioned locations.
+     */
+    public void checkDistanceBetween(double startLatitude, double startLongitude, boolean firstRun) {
+
+        if (firstRun) {
+            oldLat = startLatitude;
+            oldLong = startLongitude;
+        } else {
+            //this calculates the distance between old/new lat and long, then adds
+            //the value to results[0]. If there's already a value there, it adds them together.
+            mCurrentLocation.distanceBetween(oldLat, oldLong, startLatitude, startLongitude, results);
+        }
+        Log.d(TAG, "results[0]: " + results[0]);
+
+        String distanceCalcText = "Travelled(since last update): " + String.valueOf(results[0] + "m");
+        distanceCalcView.setText(distanceCalcText);
+        writeDistanceToDatabase(results[0], getIntent().getStringExtra("namekey"));
+        updateDailyStats(getIntent().getStringExtra("namekey"), results[0]);
+    }
+
+    public void writeDistanceToDatabase(float distance, String user) {
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        SQLiteDatabase writableDB = databaseHelper.getWritableDatabase();
+
+        float newTotalDistance = getUserDistance(user) + distance;
+
+        try {
+
+            writableDB.execSQL("UPDATE users SET distance=" + newTotalDistance +
+                    " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"");
+
+        } finally {
+            Log.d(TAG, String.valueOf(getUserDistance(user)));
+            String distanceViewText = "Walked: " + getUserDistance(user) + "m";
+            distanceView.setText(distanceViewText);
+
+
+            writableDB.close();
+            databaseHelper.close();
+        }
     }
 
     public void checkMilestone(String user) {
@@ -327,54 +382,43 @@ public class UserActivity extends AppCompatActivity implements
         v.vibrate(300);
     }
 
-    /**
-     * Checks the distance between the latitudes at each update. The isFirst boolean here is needed
-     * to set the initial start point for lat and long. This is how I have a starting point for walking.
-     * when the stop button is pressed, this is set back to true. The reason for this is that if a person
-     * presses start, then stop, then moves to a far off location, and presses start again, we do not want
-     * the app to calculate the distance between the first and second mentioned locations.
-     */
-    public void checkDistanceBetween(double startLatitude, double startLongitude, boolean firstRun) {
+    //NOTE:: IMPLEMENTATION FLAWED. Day will not change if app is'nt running during the swap from
+    //day 1 to day 2.
+    public void updateDailyStats(String user, float walked) {
+        calendar = Calendar.getInstance();
+        int today = calendar.get(Calendar.DAY_OF_WEEK);
 
-        if (firstRun) {
-            oldLat = startLatitude;
-            oldLong = startLongitude;
+        if (today != day) {
+            //set user daily stat to 0
+            day = today;
+
+            dailyDistance = 0;
+            addStatToDatabase(dailyDistance, user);
+            dailyView.setText("daily walked:" + String.valueOf(getUserStat(user)));
         } else {
-            //this calculates the distance between old/new lat and long, then adds
-            //the value to results[0]. If there's already a value there, it adds them together.
-            mCurrentLocation.distanceBetween(oldLat, oldLong, startLatitude, startLongitude, results);
+            dailyDistance = getUserStat(user) + walked;
+
+            addStatToDatabase(dailyDistance, user);
+            dailyView.setText("daily walked:" + String.valueOf(getUserStat(user)));
         }
-        Log.d(TAG, "results[0]: " + results[0]);
-
-        String distanceCalcText = "Travelled(since last update): " + String.valueOf(results[0] + "m");
-        distanceCalcView.setText(distanceCalcText);
-        writeDistanceToDatabase(results[0], getIntent().getStringExtra("namekey"));
-
     }
 
-    public void writeDistanceToDatabase(float distance, String user) {
+    public void addStatToDatabase(float stat, String user) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         SQLiteDatabase writableDB = databaseHelper.getWritableDatabase();
 
-        float newTotalDistance = getUserDistance(user) + distance;
 
         try {
 
-            writableDB.execSQL("UPDATE users SET distance=" + newTotalDistance +
+            writableDB.execSQL("UPDATE users SET daily=" + stat +
                     " WHERE " + UserTable.NAME + " = " + "\"" + user + "\"");
 
         } finally {
-            Log.d(TAG, String.valueOf(getUserDistance(user)));
-            String distanceViewText = "Walked: " + getUserDistance(user) + "m";
-            distanceView.setText(distanceViewText);
-
-            if ((getUserDistance(user) % 304.8) <= 304.8)
-
-                writableDB.close();
+            Log.d(TAG, "addStatToDatabase:" + getUserStat(user));
+            writableDB.close();
             databaseHelper.close();
         }
     }
-
 
     /**
      * Removes location updates from the FusedLocationApi.
@@ -498,6 +542,33 @@ public class UserActivity extends AppCompatActivity implements
         savedInstanceState.putParcelable(LOCATION_KEY, mCurrentLocation);
         savedInstanceState.putString(LAST_UPDATED_TIME_STRING_KEY, mLastUpdateTime);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public float getUserStat(String userName) {
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        SQLiteDatabase dataBase = databaseHelper.getReadableDatabase();
+
+        Cursor cursor = null;
+        float stat = 0;
+        try {
+
+            cursor = dataBase.rawQuery("SELECT * FROM " + UserTable.TABLE_NAME + " WHERE " + UserTable.NAME + " = " + "\"" + userName + "\"", null);
+
+            if (cursor.getCount() > 0) {
+
+                cursor.moveToFirst();
+                stat = cursor.getFloat(cursor.getColumnIndex(UserTable.DAILY));
+            }
+
+            return stat;
+        } finally {
+
+            if (cursor != null) {
+                cursor.close();
+                databaseHelper.close();
+                dataBase.close();
+            }
+        }
     }
 
 
