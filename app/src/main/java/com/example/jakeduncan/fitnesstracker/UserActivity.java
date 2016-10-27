@@ -381,7 +381,8 @@ public class UserActivity extends AppCompatActivity implements
         v.vibrate(300);
     }
 
-
+    //NOTE:: IMPLEMENTATION FLAWED. Day will not change if app is'nt running during the swap from
+    //day 1 to day 2.
     public void updateDailyStats(String user, float walked) {
         calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
