@@ -4,11 +4,11 @@ A simple app built as a test for Human Project Inc. The app will track the dista
 
 To use it, open the app, and enter a username and password. Since the username isn't in the database yet, they a new user account will be added to the database along with it's associated password, and starting distance of 0.
 
-***********************************************************
-
 Once a username is made, password checking is enabled for that user. Log in to view the walking distance associated with that specific user. Hit "Start Walking" when you will begin a walk session, and "Stop Walking" when you are finished. There is also buttons for leaderboard and OfficeMode notifications.
 
-Please be sure to enable location permissions on your local device for this app after installing. You can do this from Settings > Apps > FitnessTracker > Permissions
+***********************************************************
+
+**Please be sure to enable location permissions on your local device for this app after installing. You can do this from Settings > Apps > FitnessTracker > Permissions
 
 ***********************************************************
 
