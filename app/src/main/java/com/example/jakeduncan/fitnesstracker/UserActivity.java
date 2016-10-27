@@ -43,7 +43,7 @@ public class UserActivity extends AppCompatActivity implements
      * A longer interval is used to help eliminate the margin of error with the current latitude/longitude
      * implementation. If this is sorted out, a shorter interval could be used to help be more accurate.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
