@@ -2,6 +2,8 @@
 
 NOTE: DailyStats is currently flawed, in that it only knows that the day changed while the app is running. If it gets terminated on Day1 then reopened Day2, the daily stat will not changed. Because of this, the functionality has not yet been merged into the Master branch, and will remain separate until fixed.
 
+*****************************************************************
+
 A simple app built as a test for Human Project Inc. The app will track the distance walked based on GPS location. It also has a SQLite database for local user account functionality. Notifications will be given at intervals of 1000ft walked, and office mode can be entered in order to recieve a notification to get up and walk around every hour.
 
 To use it, open the app, and enter a username and password. Since the username isn't in the database yet, they a new user account will be added to the database along with it's associated password, and starting distance of 0.
